@@ -1,0 +1,40 @@
+body {
+    text-align: center;
+}
+
+#game {
+    width: 400px;
+    height: 600px;
+    border: 1px solid black;
+    margin: auto;
+}
+
+div { 
+    box-sizing: border-box;
+}
+
+.board {
+    width: 400px;
+    height: 400px;
+    margin: auto;
+    border: 0px solid black;
+    background-color: #FFF4A3;
+}
+
+.square {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 0px solid #eee;
+    vertical-align: top;
+}
+
+.snake {
+    background-color: black;
+}
+
+.food {
+    background-color: green;
+    border-radius: 100%;
+}
+
