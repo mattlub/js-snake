@@ -1,23 +1,19 @@
 body {
     text-align: center;
+    font-family: monospace;
 }
 
 #game {
     width: 400px;
     height: 600px;
-    border: 1px solid black;
     margin: auto;
-}
-
-div { 
-    box-sizing: border-box;
 }
 
 .board {
     width: 400px;
     height: 400px;
     margin: auto;
-    border: 0px solid black;
+    border: 10px solid brown;
     background-color: #FFF4A3;
 }
 
@@ -25,8 +21,8 @@ div {
     display: inline-block;
     width: 20px;
     height: 20px;
-    border: 0px solid #eee;
-    vertical-align: top;
+    border: none;
+    vertical-align:top;
 }
 
 .snake {

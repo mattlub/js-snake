@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Basic Page Needs
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+
     <meta charset="utf-8">
     <title>js snake</title>
-
-    <!-- Mobile Specific Metas
-    –––––––––––––––––––––––––––––––––––––––––––––––––– -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
     <link rel="stylesheet" href="main.css">   
+    
 </head>
 
 <body>
 
-    <div class="container">
-    
+    <div class="container">   
         <h2>js snake</h2>
-        <p>js snake. Check out the source <a href="https://github.com/mattlub/js-tic-tac-toe">here</a>!</p>
-        <button id="new-game-button">new game</button>
-        <div id="game"></div>
-        
+        <p>js snake. Check out the source <a href="https://github.com/mattlub/js-snake">here</a>!</p>
+        New game:
+        <button id="normal-mode-button">normal mode</button>
+        <button id="greedy-mode-button">greedy mode</button>
+        <button id="fast-mode-button">fast mode</button>
+        <div id="game"></div>        
     </div>
     
     <script type="text/javascript" src="snake.js"></script>
     
     <script type="text/javascript"> 
         document.addEventListener('DOMContentLoaded', function() {
-            var newGameButton = document.getElementById("new-game-button"),
+            var normalModeButton = document.getElementById("normal-mode-button"),
+                greedyModeButton = document.getElementById("greedy-mode-button"),
+                fastModeButton = document.getElementById("fast-mode-button"),
                 gameDiv = document.getElementById("game");
                 
-            newGameButton.addEventListener("click", function() {
+            normalModeButton.addEventListener("click", function() {
                 new snakeGame(gameDiv);
+            });
+            greedyModeButton.addEventListener("click", function() {
+                new snakeGame(gameDiv, {gameMode: "greedy"});
+            });
+            fastModeButton.addEventListener("click", function() {
+                new snakeGame(gameDiv, {gameSpeed: 40});
             });
         });
     </script>

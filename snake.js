@@ -1,29 +1,31 @@
 var snakeGame = function(element, options) {
     
     // get options or set defaults
-    var options = options || {} ;
-    options.boardSize = options.boardSize || 20;
+    var options = options || {},
+        boardSize = options.boardSize || 20,
+        gameMode = options.gameMode || "normal",
+        gameSpeed = options.gameSpeed || 70;
     
-    var numSquares = options.boardSize * options.boardSize;
+    var numSquares = boardSize * boardSize;
     
-    // declare variables (positions are indexes on the board)
+    // board will be filled with "o" for open, "s" for snake, "f" for food
+    var board = new Array(numSquares).fill("o"),
+        gameStarted = false,
+        gameOver = false,
+        intervalId;
+    
+    // snake variables 
+    // snakeArray is array of indexes of positions on the board which the snake occupies
     var snakeArray = [ ],
-        freeSquares = [ ],
         snakeLength = 1,
+        // snakeMoving is the direction the snake is moving in
         snakeMoving = null,
+        // snakeFacing is the direction the snake will move in next
         snakeFacing = "up",
         snakeHead,
         snakeTail,
+        nextSquare;
         
-        // board is filled with "o" for open, "s" for snake, "f" for food
-        board = new Array(numSquares).fill("o"),
-        gameStarted = false,
-        gameOver = false,
-        nextSquare,
-        intervalId;
-        
-    var canContinue = true,
-        timeLog;
     
     // create DOM elements
     var DOM_board_container = quickCreateElement("div", "board"),
@@ -33,15 +35,15 @@ var snakeGame = function(element, options) {
         DOM_board.push(quickCreateElement("div", "square", "square" + i));
     }   
     
-    // organise DOM elements: add 9 squares to board    
+    // organise DOM elements: add squares to board (could be combined with above loop)  
     for (var i=0; i<numSquares; i++) {
         DOM_board_container.appendChild(DOM_board[i]);
     }      
     
     // put snake on board
     var startPoint;
-    if (options.boardSize % 2 === 0) {
-        startPoint = Math.floor(numSquares/2 + options.boardSize/2);
+    if (boardSize % 2 === 0) {
+        startPoint = Math.floor(numSquares/2 + boardSize/2);
     }
     else {
         startPoint = Math.floor(numSquares/2);
@@ -52,41 +54,37 @@ var snakeGame = function(element, options) {
     board[startPoint] = "s";
     DOM_board[startPoint].classList.add("snake");
         
-    // arrow button event listeners
-    
+    // add arrow button event listeners   
     document.addEventListener("keydown", function(e) {
         if (!gameStarted) {
-            gameStarted = true;
             startGame();
         }
         switch(e.which) {
             case 37: // left
-            if (snakeMoving != "right") {
-                snakeFacing = "left";
-            }
-            break;
-
+                if (snakeMoving != "right") {
+                    snakeFacing = "left";
+                }
+                break;
             case 38: // up
-            if (snakeMoving != "down") {
-                snakeFacing = "up";
-            }
-            break;
-
+                if (snakeMoving != "down") {
+                    snakeFacing = "up";
+                }
+                break;
             case 39: // right
-            if (snakeMoving != "left") {
-                snakeFacing = "right";
-            }
-            break;
-
+                if (snakeMoving != "left") {
+                    snakeFacing = "right";
+                }
+                break;
             case 40: // down
-            if (snakeMoving != "up") {
-                snakeFacing = "down";
-            }
-            break;
-
-            default: return; // exit this handler for other keys
+                if (snakeMoving != "up") {
+                    snakeFacing = "down";
+                }
+                break;
+            // exit this handler for other keys
+            default: return;
         }
-        e.preventDefault(); // prevent the default action (scroll / move caret)
+        // prevent the default action e.g. scrolling
+        e.preventDefault();
     });
       
     // HELPER FUNCTIONS
@@ -98,15 +96,6 @@ var snakeGame = function(element, options) {
         if (id) { ret.id = id; }
         return ret
     }
-    
-    // function to check if an array contains an element
-    function contains(arr, el) {
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == el) { return true }
-        }
-        return false
-    };
-    
 
     // PROCESS FUNCTIONS
     
@@ -126,7 +115,7 @@ var snakeGame = function(element, options) {
         snakeHead = snakeArray[snakeLength - 1];
         snakeMoving = snakeFacing;
         if (snakeFacing === "left") {
-            if (snakeHead % options.boardSize === 0) {
+            if (snakeHead % boardSize === 0) {
                 return "out of bounds"
             }
             else {
@@ -134,7 +123,7 @@ var snakeGame = function(element, options) {
             }
         }
         else if (snakeFacing === "right") {
-            if (snakeHead % options.boardSize === options.boardSize - 1) {
+            if (snakeHead % boardSize === boardSize - 1) {
                 return "out of bounds"
             }
             else {
@@ -142,31 +131,32 @@ var snakeGame = function(element, options) {
             }
         }
         else if (snakeFacing === "up") {
-            if (snakeHead < options.boardSize) {
+            if (snakeHead < boardSize) {
                 return "out of bounds"
             }
             else {
-                return snakeHead - options.boardSize;
+                return snakeHead - boardSize;
             }
         }
         else if (snakeFacing === "down") {
-            if (snakeHead >= options.boardSize * (options.boardSize - 1)) {
+            if (snakeHead >= boardSize * (boardSize - 1)) {
                 return "out of bounds"
             }
             else {
-                return snakeHead + options.boardSize;
+                return snakeHead + boardSize;
             }
         }
-    }
+    };
     
-    function moveSnake() {
+    function moveSnakeToNextSquare() {
         if (nextSquare === "out of bounds") {
+            // die
             window.clearInterval(intervalId);
             gameOver = true;
-            console.log("died out of bounds");
+            // console.log("died out of bounds");
         }
         else if (board[nextSquare] === "o") {
-            // move
+            // move to open square
             snakeTail = snakeArray.shift();
             // update board and snake variable
             snakeArray.push(nextSquare);
@@ -177,63 +167,76 @@ var snakeGame = function(element, options) {
             DOM_board[snakeTail].classList.remove("snake"); 
         }
         else if (board[nextSquare] === "f") {
-            // eat
+            // eat food
             // update board and snake variable
             snakeArray.push(nextSquare);
             board[nextSquare] = "s";
             // update DOM
             DOM_board[nextSquare].classList.add("snake");
             DOM_board[nextSquare].classList.remove("food");
-            
+           
             snakeLength += 1;
             generateFood();
-            console.log("ate food");
+            if (gameMode === "greedy" && snakeLength % 5 === 0) {
+                generateFood();
+            }
+            // console.log("ate food");
         }
         else if (board[nextSquare] === "s") {
             // die
             window.clearInterval(intervalId);
             gameOver = true;
-            console.log("died hitting itself");
-            
+            // console.log("died hitting itself");     
         }
         updateGameMessage();
-    }
+    };
      
     function generateFood() {
-        // TODO: change becuase problematic when snake gets biiiig
-        var random = Math.floor(Math.random() * numSquares);
-        while (board[random] != "o") {
-            random = Math.floor(Math.random() * numSquares);
+        // TODO: change becuase potentially problematic when snake gets biiiig
+        var randomIndex = Math.floor(Math.random() * numSquares);
+        while (board[randomIndex] != "o") {
+            randomIndex = Math.floor(Math.random() * numSquares);
         }
-        board[random] = "f";
-        DOM_board[random].classList.add("food");
-    }
+        board[randomIndex] = "f";
+        DOM_board[randomIndex].classList.add("food");
+    };
     
     function updateGameMessage() {
         var message = "";
-        if (gameOver) {
-            message += "Game Over! ";
+        if (!gameStarted) {
+            message += "Use arrow keys to move. Press any key to start."
         }
-        message += "Score: " + snakeLength;
-        DOM_gameMessage.innerHTML = message;
-    }
+        else {
+            if (gameOver) {
+                message += "Game Over! ";
+            }
+            message += "Score: " + snakeLength;
+        }
+        DOM_gameMessage.innerHTML = message;      
+    };
     
     function startGame () {
+        gameStarted = true;
         generateFood();
-        intervalId = window.setInterval(continueGame, 80);
-    }
+        if (gameMode === "greedy") {
+           generateFood();
+           generateFood(); 
+        }
+        intervalId = window.setInterval(continueGame, gameSpeed);
+    };
     
     function continueGame() {
-        timeLog = Date.now();
+        // to track time (currently unused)
+        // var timeLog = Date.now();
         nextSquare = getNextSquare();
-        moveSnake();
-    }
+        moveSnakeToNextSquare();
+    };
     
-    // START GAME
+    // INITIALISE GAME
     resetDOM();
     loadInitialDOM();
     updateGameMessage();
-    // await key press
+    // await key press to start game
 
 };
 
