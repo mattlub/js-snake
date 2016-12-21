@@ -12,9 +12,9 @@ After making a tic tac toe game, I thought of another simple game that would be 
 
 ### Planned Improvements
 - [ ] 1/12/16: make js more modular, e.g. separate out updating DOM etc.
-- [ ] 2/12/16: add customisable options/game modes
-- [ ] 2/12/16: add highscores table and screenshots of final positions
-- [ ] 2/12/16: add "autopilot" mode
+- [x] 2/12/16: add customisable options/game modes
+- [ ] 2/12/16: add highscores table and screenshots of final positions (stuff to save to db: number of clicks, total time)
+- [x] 2/12/16: add "autopilot" mode (DONE in simplistic way)
 - [ ] 2/12/16: add speed increase as game goes on?
 - [ ] 2/12/16: amend generateFood function, as it will currently struggle if there are not many free squares and probably crash if you fill the whole board.
 

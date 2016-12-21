@@ -17,6 +17,7 @@
         <button id="normal-mode-button">normal mode</button>
         <button id="greedy-mode-button">greedy mode</button>
         <button id="fast-mode-button">fast mode</button>
+        <button id="auto-mode-button">auto mode</button>
         <div id="game"></div>        
     </div>
     
@@ -27,6 +28,7 @@
             var normalModeButton = document.getElementById("normal-mode-button"),
                 greedyModeButton = document.getElementById("greedy-mode-button"),
                 fastModeButton = document.getElementById("fast-mode-button"),
+                autoModeButton = document.getElementById("auto-mode-button"),
                 gameDiv = document.getElementById("game");
                 
             normalModeButton.addEventListener("click", function() {
@@ -37,6 +39,9 @@
             });
             fastModeButton.addEventListener("click", function() {
                 new snakeGame(gameDiv, {gameSpeed: 40});
+            });
+            autoModeButton.addEventListener("click", function() {
+                new snakeGame(gameDiv, {gameMode: "autopilot", gameSpeed: 20, boardSize: 12});
             });
         });
     </script>
